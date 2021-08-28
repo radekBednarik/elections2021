@@ -62,7 +62,3 @@ def get_county_data(nuts: str, resource: str = county) -> tuple[bool, str]:
     response: Response = call(full_resource)
     passed, text = validate(response.text)
     return (passed, text)
-
-
-if __name__ == "__main__":
-    print(get_county_data("CZ03"))
