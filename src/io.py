@@ -66,7 +66,3 @@ def read_nuts(
         output[nuts] = county
 
     return output
-
-
-if __name__ == "__main__":
-    print(load_config())
