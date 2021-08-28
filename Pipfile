@@ -5,11 +5,13 @@ name = "pypi"
 
 [packages]
 requests = "*"
+pytomlpp = "*"
 
 [dev-packages]
 black = "*"
 mypy = "*"
 isort = "*"
+types-requests = "*"
 
 [requires]
 python_version = "3.9"
