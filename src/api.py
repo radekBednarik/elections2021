@@ -1,19 +1,12 @@
 '''Handles API calls to opend data XML data source.
 '''
 
-from typing import Any
-
 from requests import Response, get
 
-from src.io import load_config
 from src.utils import retrieve_error_message
 
-config: dict[str, Any] = load_config()
-root: str = config["api"]["root"]
-county: str = config["api"]["resources"]["vysledky_okresy_obce"]
 
-
-def call(resource: str, root_: str = root) -> Response:
+def call(resource: str, root_: str = "https://www.volby.cz") -> Response:
     """Calls the web resource and returns response.
 
     Response is `requests.Response` object
@@ -46,13 +39,13 @@ def validate(response_text: str, start_tag: str = "<CHYBA>") -> tuple[bool, str]
     return (True, response_text)
 
 
-def get_county_data(nuts: str, resource: str = county) -> tuple[bool, str]:
+def get_county_data(nuts: str, resource: str) -> tuple[bool, str]:
     """Returns data of given `nuts` county as `str`. This needs to be
     further parsed by XML parser.
 
     Args:
         nuts (str): NUTS code of given county/city.
-        resource (str, optional): resource template.
+        resource (str): resource template url.
 
     Returns:
         tuple[bool, str]: if data does not contain error message, return `(True, data)`.
