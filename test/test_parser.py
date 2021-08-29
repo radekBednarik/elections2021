@@ -2,13 +2,19 @@
 '''Testing parser functions.
 '''
 
+from typing import Any
+
 from src.api import get_county_data
+from src.io import load_config
 from src.parser import parse
+
+config: dict[str, Any] = load_config()
+county: str = config["api"]["resources"]["vysledky_okresy_obce"]
 
 
 class TestParser:
     def test_parser_returns_true(self):
-        api_status, raw_data = get_county_data("CZ0100")
+        api_status, raw_data = get_county_data("CZ0100", resource=county)
         assert api_status is True
         parse_status, _ = parse(raw_data)
         assert parse_status is True
