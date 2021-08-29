@@ -1,6 +1,8 @@
 {
     "python.pipenvPath": "pipenv",
     "python.linting.mypyEnabled": true,
+    "python.linting.enabled": true,
+    "python.linting.pylintEnabled": true,
     "python.formatting.provider": "black",
     "editor.formatOnPaste": true,
     "editor.formatOnSave": true,

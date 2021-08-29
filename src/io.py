@@ -1,7 +1,7 @@
 '''Handles IO operations.
 '''
-from typing import Any
 from csv import reader
+from typing import Any
 
 from pytomlpp import loads
 

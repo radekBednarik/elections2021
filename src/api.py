@@ -13,7 +13,7 @@ root: str = config["api"]["root"]
 county: str = config["api"]["resources"]["vysledky_okresy_obce"]
 
 
-def call(resource: str, root: str = root) -> Response:
+def call(resource: str, root_: str = root) -> Response:
     """Calls the web resource and returns response.
 
     Response is `requests.Response` object
@@ -25,7 +25,7 @@ def call(resource: str, root: str = root) -> Response:
     Returns:
         Response: requests object representing response
     """
-    response: Response = get(f"{root}{resource}")
+    response: Response = get(f"{root_}{resource}")
     response.raise_for_status()
     return response
 
@@ -60,5 +60,5 @@ def get_county_data(nuts: str, resource: str = county) -> tuple[bool, str]:
     """
     full_resource: str = resource.replace(r"{{nuts}}", nuts)
     response: Response = call(full_resource)
-    passed, text = validate(response.text)
-    return (passed, text)
+    status, text = validate(response.text)
+    return (status, text)

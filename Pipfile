@@ -6,12 +6,16 @@ name = "pypi"
 [packages]
 requests = "*"
 pytomlpp = "*"
+lxml = "*"
 
 [dev-packages]
 black = "*"
 mypy = "*"
 isort = "*"
 types-requests = "*"
+pytest = "*"
+pyhamcrest = "*"
+pylint = "*"
 
 [requires]
 python_version = "3.9"
