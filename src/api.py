@@ -4,6 +4,7 @@
 from requests import Response, get
 
 from src.utils import retrieve_error_message
+from src.decorators import cache
 
 
 def call(resource: str, root_: str = "https://www.volby.cz") -> Response:
@@ -39,6 +40,7 @@ def validate(response_text: str, start_tag: str = "<CHYBA>") -> tuple[bool, str]
     return (True, response_text)
 
 
+@cache(time_delta=60, location="cache.tmp")
 def get_county_data(nuts: str, resource: str) -> tuple[bool, str]:
     """Returns data of given `nuts` county as `str`. This needs to be
     further parsed by XML parser.
@@ -55,3 +57,7 @@ def get_county_data(nuts: str, resource: str) -> tuple[bool, str]:
     response: Response = call(full_resource)
     status, text = validate(response.text)
     return (status, text)
+
+
+if __name__ == "__main__":
+    print(get_county_data("CZ0100", "/pls/ps2021/vysledky_okres?nuts={{nuts}}"))
