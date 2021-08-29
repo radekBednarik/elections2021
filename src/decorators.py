@@ -1,10 +1,7 @@
 '''Decorator funcs are here.
 '''
 
-import pickle
-from datetime import datetime, timedelta
-from os.path import isfile
-from typing import Any
+from src.io import process_cache
 
 
 def cache(**kwargs):
@@ -19,35 +16,10 @@ def cache(**kwargs):
         func,
         time_delta: int = kwargs["time_delta"],
         location: str = kwargs["location"],
+        resource_template: str = kwargs["resource_template"]
     ):
         def wrapper(*args, **kwargs):
-            if not isfile(location):
-                with open(location, mode="wb") as write_handle:
-                    pickle.dump(
-                        {
-                            "timestamp": datetime.now(),
-                            "returned": func(*args, **kwargs),
-                        },
-                        write_handle,
-                    )
-                    return location
-
-            with open(location, mode="rb") as read_handle:
-                cache_data: dict[str, Any] = pickle.load(read_handle)
-
-            now_: datetime = datetime.now()
-            if now_ > (cache_data["timestamp"] + timedelta(seconds=time_delta)):
-                with open(location, mode="wb") as write_handle:
-                    pickle.dump(
-                        {
-                            "timestamp": datetime.now(),
-                            "returned": func(*args, **kwargs),
-                        },
-                        write_handle,
-                    )
-                    return location
-
-            return location
+            return process_cache(time_delta, location, func, resource_template, *args, **kwargs)
 
         return wrapper
 

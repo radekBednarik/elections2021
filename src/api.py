@@ -3,7 +3,7 @@
 
 from requests import Response, get
 
-from src.utils import retrieve_error_message
+from src.utils import retrieve_error_message, replace_substring
 from src.decorators import cache
 
 
@@ -40,7 +40,7 @@ def validate(response_text: str, start_tag: str = "<CHYBA>") -> tuple[bool, str]
     return (True, response_text)
 
 
-@cache(time_delta=60, location="cache.tmp")
+@cache(time_delta=60, location="cache.tmp", resource_template=r"{{nuts}}")
 def get_county_data(nuts: str, resource: str) -> tuple[bool, str]:
     """Returns data of given `nuts` county as `str`. This needs to be
     further parsed by XML parser.
@@ -50,10 +50,10 @@ def get_county_data(nuts: str, resource: str) -> tuple[bool, str]:
         resource (str): resource template url.
 
     Returns:
-        tuple[bool, str]: if data does not contain error message, return `(True, data)`.
-        Else return `(False, error message)`
+        tuple[bool, str, str]: if data does not contain error message, return `(True, data)`.
+        Else return `(False, error message)`.
     """
-    full_resource: str = resource.replace(r"{{nuts}}", nuts)
+    full_resource: str = replace_substring(resource, nuts, r"{{nuts}}")
     response: Response = call(full_resource)
     status, text = validate(response.text)
     return (status, text)

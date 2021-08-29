@@ -1,9 +1,14 @@
 '''Handles IO operations.
 '''
+import pickle
 from csv import reader
-from typing import Any
+from datetime import datetime, timedelta
+from os.path import isfile
+from typing import Any, Callable
 
 from pytomlpp import loads
+
+from src.utils import replace_substring
 
 
 def load_config(filepath: str = "config.toml") -> dict[str, Any]:
@@ -66,3 +71,46 @@ def read_nuts(
         output[nuts] = county
 
     return output
+
+
+def process_cache(
+    time_delta: int,
+    cache_location: str,
+    func: Callable,
+    resource_template: str,
+    *args,
+    **kwargs,
+):
+
+    resource_url: str = replace_substring(args[1], args[0], resource_template)
+    cache: dict[str, Any] = {}
+
+    if not isfile(cache_location):
+        cache[resource_url] = {}
+        cache[resource_url]["timestamp"] = datetime.now()
+        cache[resource_url]["returned"] = func(*args, **kwargs)
+        with open(cache_location, mode="wb") as write_handle:
+            pickle.dump(cache, write_handle)
+            return cache[resource_url]["returned"]
+
+    with open(cache_location, mode="rb") as read_handle:
+        cache = pickle.load(read_handle)
+
+    if resource_url not in list(cache.keys()):
+        cache[resource_url] = {}
+        cache[resource_url]["timestamp"] = datetime.now()
+        cache[resource_url]["returned"] = func(*args, **kwargs)
+        with open(cache_location, mode="wb") as write_handle:
+            pickle.dump(cache, write_handle)
+            return cache[resource_url]["returned"]
+
+    now_: datetime = datetime.now()
+
+    if now_ > (cache[resource_url]["timestamp"] + timedelta(seconds=time_delta)):
+        cache[resource_url]["timestamp"] = datetime.now()
+        cache[resource_url]["returned"] = func(*args, **kwargs)
+        with open(cache_location, mode="wb") as write_handle:
+            pickle.dump(cache, write_handle)
+            return cache[resource_url]["returned"]
+
+    return cache[resource_url]["returned"]
