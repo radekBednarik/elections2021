@@ -3,12 +3,12 @@
 '''Handles the parsing of the XML data.
 '''
 
-from typing import Any
+from typing import Any, Optional
 
 from lxml import etree
 
 
-def parse(xml_string_data: str, encoding: str = "utf-8") -> Any:
+def parse(xml_string_data: str, encoding: str = "utf-8") -> tuple[bool, Optional[Any]]:
     """Parses the XML formatted raw string data and returns representation
     as `root` node.
 
@@ -23,7 +23,7 @@ def parse(xml_string_data: str, encoding: str = "utf-8") -> Any:
         Defaults to "utf-8".
 
     Returns:
-        Any: Parsed data.
+        tuple[bool, Optional[Any]]: Parsed data.
     """
     try:
         parsed = etree.fromstring(xml_string_data.encode(encoding))
