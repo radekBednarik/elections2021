@@ -82,7 +82,9 @@ def process_cache(
     **kwargs,
 ):
 
-    resource_url: str = replace_substring(args[1], args[0], resource_template)
+    resource_url: str = replace_substring(
+        kwargs["resource"], kwargs["nuts"], resource_template
+    )
     cache: dict[str, Any] = {}
 
     if not isfile(cache_location):

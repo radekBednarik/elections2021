@@ -41,23 +41,29 @@ def validate(response_text: str, start_tag: str = "<CHYBA>") -> tuple[bool, str]
 
 
 @cache(time_delta=60, location="cache.tmp", resource_template=r"{{nuts}}")
-def get_county_data(nuts: str, resource: str) -> tuple[bool, str]:
+def get_county_data(nuts: str = None, resource: str = None) -> tuple[bool, str]:
     """Returns data of given `nuts` county as `str`. This needs to be
     further parsed by XML parser.
 
     Args:
-        nuts (str): NUTS code of given county/city.
-        resource (str): resource template url.
+        nuts (Optional[str]): NUTS code of given county/city.
+        resource (Optional[str]): resource template url.
 
     Returns:
-        tuple[bool, str, str]: if data does not contain error message, return `(True, data)`.
+        tuple[bool, str]: if data does not contain error message, return `(True, data)`.
         Else return `(False, error message)`.
     """
-    full_resource: str = replace_substring(resource, nuts, r"{{nuts}}")
-    response: Response = call(full_resource)
-    status, text = validate(response.text)
-    return (status, text)
+    if nuts is not None and resource is not None:
+        full_resource: str = replace_substring(resource, nuts, r"{{nuts}}")
+        response: Response = call(full_resource)
+        status, text = validate(response.text)
+        return (status, text)
+    raise TypeError("Arguments can be only of type {str}!")
 
 
 if __name__ == "__main__":
-    print(get_county_data("CZ0100", "/pls/ps2021/vysledky_okres?nuts={{nuts}}"))
+    print(
+        get_county_data(
+            nuts="CZ0100", resource="/pls/ps2021/vysledky_okres?nuts={{nuts}}"
+        )
+    )
