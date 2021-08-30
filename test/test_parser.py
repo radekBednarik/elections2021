@@ -14,7 +14,7 @@ county: str = config["api"]["resources"]["vysledky_okresy_obce"]
 
 class TestParser:
     def test_parser_returns_true(self):
-        api_status, raw_data = get_county_data("CZ0100", resource=county)
+        api_status, raw_data = get_county_data(nuts="CZ0100", resource=county)
         assert api_status is True
         parse_status, _ = parse(raw_data)
         assert parse_status is True
