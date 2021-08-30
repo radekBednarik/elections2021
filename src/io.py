@@ -90,7 +90,7 @@ def process_cache(
         resource_template (str): resource template of the api call
 
     Returns:
-        Any - returns original returned data of the cached func
+        Any - returns data of the cached func
     """
 
     def write_cache(key: str, cache: dict[str, Any]):
