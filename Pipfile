@@ -16,6 +16,7 @@ types-requests = "*"
 pytest = "*"
 pyhamcrest = "*"
 pylint = "*"
+lizard = "*"
 
 [requires]
 python_version = "3.9"

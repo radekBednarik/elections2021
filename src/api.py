@@ -64,6 +64,6 @@ def get_county_data(nuts: str = None, resource: str = None) -> tuple[bool, str]:
 if __name__ == "__main__":
     print(
         get_county_data(
-            nuts="CZ0100", resource="/pls/ps2021/vysledky_okres?nuts={{nuts}}"
+            nuts="CZ0200", resource="/pls/ps2021/vysledky_okres?nuts={{nuts}}"
         )
     )

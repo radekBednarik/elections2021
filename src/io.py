@@ -80,7 +80,25 @@ def process_cache(
     resource_template: str,
     *args,
     **kwargs,
-):
+) -> Any:
+    """Processes cache.
+
+    Args:
+        time_delta (int): cache time period
+        cache_location (str): where is cache file stored
+        func (Callable): function which call is being cached
+        resource_template (str): resource template of the api call
+
+    Returns:
+        Any - returns original returned data of the cached func
+    """
+
+    def write_cache(key: str, cache: dict[str, Any]):
+        cache[key]["timestamp"] = datetime.now()
+        cache[key]["returned"] = func(*args, **kwargs)
+        with open(cache_location, mode="wb") as write_handle:
+            pickle.dump(cache, write_handle)
+        return cache
 
     resource_url: str = replace_substring(
         kwargs["resource"], kwargs["nuts"], resource_template
@@ -89,30 +107,21 @@ def process_cache(
 
     if not isfile(cache_location):
         cache[resource_url] = {}
-        cache[resource_url]["timestamp"] = datetime.now()
-        cache[resource_url]["returned"] = func(*args, **kwargs)
-        with open(cache_location, mode="wb") as write_handle:
-            pickle.dump(cache, write_handle)
-            return cache[resource_url]["returned"]
+        cache = write_cache(resource_url, cache)
+        return cache[resource_url]["returned"]
 
     with open(cache_location, mode="rb") as read_handle:
         cache = pickle.load(read_handle)
 
     if resource_url not in list(cache.keys()):
         cache[resource_url] = {}
-        cache[resource_url]["timestamp"] = datetime.now()
-        cache[resource_url]["returned"] = func(*args, **kwargs)
-        with open(cache_location, mode="wb") as write_handle:
-            pickle.dump(cache, write_handle)
-            return cache[resource_url]["returned"]
+        cache = write_cache(resource_url, cache)
+        return cache[resource_url]["returned"]
 
     now_: datetime = datetime.now()
 
     if now_ > (cache[resource_url]["timestamp"] + timedelta(seconds=time_delta)):
-        cache[resource_url]["timestamp"] = datetime.now()
-        cache[resource_url]["returned"] = func(*args, **kwargs)
-        with open(cache_location, mode="wb") as write_handle:
-            pickle.dump(cache, write_handle)
-            return cache[resource_url]["returned"]
+        cache = write_cache(resource_url, cache)
+        return cache[resource_url]["returned"]
 
     return cache[resource_url]["returned"]
