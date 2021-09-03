@@ -8,7 +8,7 @@ from typing import Any, Optional
 from lxml import etree
 
 
-def parse(xml_string_data: str, encoding: str = "utf-8") -> tuple[bool, Optional[Any]]:
+def parse_xml(xml_string_data: str, encoding: str = "utf-8") -> tuple[bool, Optional[Any]]:
     """Parses the XML formatted raw string data and returns representation
     as `root` node.
 
@@ -31,3 +31,9 @@ def parse(xml_string_data: str, encoding: str = "utf-8") -> tuple[bool, Optional
     except Exception as exc:
         print(str(exc))
         return (False, None)
+
+
+def parse_county_data(parsed_data: Any, city: Optional[str] = None):
+    node_vysledky_okres: Any = parsed_data.tag
+
+    return node_vysledky_okres
