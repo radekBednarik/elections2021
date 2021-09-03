@@ -16,7 +16,7 @@ def main():
     """Main func."""
     parser: ArgumentParser = create_parser()
     parser = create_subparsers(parser)
-    parsed: Namespace = parse(parser)
+    parsed: Namespace = parse(parser, ["county", "CZ0301"])
 
     if parsed.nuts:
         status, raw_data = get_county_data(nuts=parsed.nuts, resource=resource_county)

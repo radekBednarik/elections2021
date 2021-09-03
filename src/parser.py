@@ -43,6 +43,16 @@ def parse_county_data(parsed_data: Any, city: Optional[str] = None):
         attrs: dict[str, Any] = authority_data.attrib
         print(attrs)
 
+        if city is None:
+            if "NAZ_OKRES" in attrs:
+
+                for county_data in authority_data:
+                    attrs = county_data.attrib
+                    print(attrs)
+
+                    print(list(county_data))
+                    return
+
         # for level_2 in list(level_1):
         #     attrs_level_2: dict[str, Any] = level_2.attrib
         #     print(attrs_level_2)
