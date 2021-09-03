@@ -8,7 +8,7 @@ from pytest import fixture
 from src.api import get_county_data
 from src.cli import create_parser, create_subparsers, parse
 from src.io import load_config
-from src.parser import parse_county_data, parse
+from src.parser import parse_county_data, parse_xml
 
 config = load_config()
 resource_county = config["api"]["resources"]["vysledky_okresy_obce"]
