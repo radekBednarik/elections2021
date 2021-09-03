@@ -45,7 +45,7 @@ def create_subparsers(parser: ArgumentParser) -> ArgumentParser:
     return parser
 
 
-def parse(parser: ArgumentParser) -> Namespace:
+def parse(parser: ArgumentParser, *args) -> Namespace:
     """Parses CLI args, returns `Namespace` with parsed args.
 
     Args:
@@ -54,8 +54,4 @@ def parse(parser: ArgumentParser) -> Namespace:
     Returns:
         Namespace: object with parsed args
     """
-    return parser.parse_args()
-
-
-if __name__ == "__main__":
-    print(parse(create_subparsers(create_parser())))
+    return parser.parse_args(*args)
