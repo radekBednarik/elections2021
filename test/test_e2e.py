@@ -26,3 +26,4 @@ class TestE2E:
         assert_that(data, instance_of(tuple))
         assert_that(data[0], is_(True))
         # parse data
+        print(data)
