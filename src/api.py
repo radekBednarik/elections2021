@@ -40,7 +40,7 @@ def validate(response_text: str, start_tag: str = "<CHYBA>") -> tuple[bool, str]
     return (True, response_text)
 
 
-@cache(time_delta=60, location="cache.tmp", resource_template=r"{{nuts}}")
+@cache(time_delta=300, location="cache.tmp", resource_template=r"{{nuts}}")
 def get_county_data(nuts: str = None, resource: str = None) -> tuple[bool, str]:
     """Returns data of given `nuts` county as `str`. This needs to be
     further parsed by XML parser.

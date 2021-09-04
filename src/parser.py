@@ -35,28 +35,47 @@ def parse_xml(
         return (False, None)
 
 
-def parse_county_data(parsed_data: Any, city: Optional[str] = None):
+def parse_county_data(parsed_data: Any, city: Optional[str] = None) -> dict[str, Any]:
+    """Parses XML object to retrieve data as `dict`.
+
+    In case the `city` name from given NUTS county is not provided,
+    then data for NUTS county level are returned.
+
+    In case the `city` name is provided, data for given city are returned.
+
+    Args:
+        parsed_data (Any): lxml Element object representing XML data
+        city (Optional[str], optional): Name of the city from the county
+        E.g. "Praha 1". Defaults to None.
+
+    Returns:
+        dict[str, Any]: parsed data from lxml Element object as `dict`.
+    """
     output: dict[str, Any] = {}
     authorities_data_level: list[Any] = list(parsed_data)
+    master_key: str = ""
 
-    for authority_data in authorities_data_level:
-        attrs: dict[str, Any] = authority_data.attrib
-        print(attrs)
+    for level_1 in authorities_data_level:
+        if city is None and "OKRES" in level_1.tag:
+            master_key = level_1.attrib["NUTS_OKRES"]
+            output[master_key] = {"descriptors": level_1.attrib, "data": []}
 
-        if city is None:
-            if "NAZ_OKRES" in attrs:
+            for level_2 in list(level_1):
+                output[master_key]["data"].append(level_2.attrib)
 
-                for county_data in authority_data:
-                    attrs = county_data.attrib
-                    print(attrs)
+            break
 
-                    print(list(county_data))
-                    return
+        if (
+            city is not None
+            and "OBEC" in level_1.tag
+            and city.strip() == level_1.attrib["NAZ_OBEC"]
+        ):
+            master_key = level_1.attrib["CIS_OBEC"]
+            output[master_key] = {"descriptors": level_1.attrib, "data": []}
 
-        # for level_2 in list(level_1):
-        #     attrs_level_2: dict[str, Any] = level_2.attrib
-        #     print(attrs_level_2)
+            for level_2 in list(level_1):
+                output[master_key]["data"].append(level_2.attrib)
 
-        #     for level_3 in list(level_2):
-        #         attrs_level_3: dict[str, Any] = level_3.attrib
-        #         print(attrs_level_3)
+            break
+
+    return output
