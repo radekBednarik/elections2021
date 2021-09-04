@@ -1,7 +1,7 @@
 # pylint: disable=missing-class-docstring, invalid-name, no-self-use, missing-function-docstring, redefined-outer-name
 
-'''E2E tests.
-'''
+"""E2E tests.
+"""
 
 from hamcrest import assert_that, instance_of, is_, not_
 from pytest import fixture

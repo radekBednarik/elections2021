@@ -1,5 +1,5 @@
-'''Main.
-'''
+"""Main.
+"""
 
 from argparse import Namespace
 from src.api import get_county_data
@@ -16,7 +16,9 @@ def main():
     """Main func."""
 
     enable_coloring()
-    parsed: Namespace = parse(create_subparsers(create_parser()), ["county", "CZ0100", "--name=Praha 1"])
+    parsed: Namespace = parse(
+        create_subparsers(create_parser()), ["county", "CZ0100", "--name=Praha 1"]
+    )
 
     if parsed.nuts:
         city_name = parsed.name if parsed.name is not None else None

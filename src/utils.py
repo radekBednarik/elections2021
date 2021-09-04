@@ -1,5 +1,5 @@
-'''Utilities.
-'''
+"""Utilities.
+"""
 
 
 def retrieve_error_message(data: str, start_tag: str = "<CHYBA>") -> str:

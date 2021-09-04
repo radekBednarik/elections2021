@@ -1,6 +1,6 @@
 # pylint: disable=missing-class-docstring, invalid-name, no-self-use, missing-function-docstring
-'''Testing parser functions.
-'''
+"""Testing parser functions.
+"""
 
 from typing import Any
 

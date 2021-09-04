@@ -1,5 +1,5 @@
-'''Handles CLI commands parsing.
-'''
+"""Handles CLI commands parsing.
+"""
 from argparse import ArgumentParser, Namespace
 from typing import Any
 

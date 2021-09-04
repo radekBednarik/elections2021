@@ -1,5 +1,5 @@
-'''Handles output of data in the console.
-'''
+"""Handles output of data in the console.
+"""
 
 from typing import Any, Union
 

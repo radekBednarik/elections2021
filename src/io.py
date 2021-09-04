@@ -1,5 +1,5 @@
-'''Handles IO operations.
-'''
+"""Handles IO operations.
+"""
 import pickle
 from csv import reader
 from datetime import datetime, timedelta

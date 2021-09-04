@@ -1,5 +1,5 @@
-'''Handles API calls to opend data XML data source.
-'''
+"""Handles API calls to opend data XML data source.
+"""
 
 from requests import Response, get
 

@@ -1,6 +1,6 @@
 # pylint: disable=missing-class-docstring, invalid-name, no-self-use, missing-function-docstring
-'''Handles tests of API functions.
-'''
+"""Handles tests of API functions.
+"""
 
 from typing import Any
 

@@ -1,5 +1,5 @@
-'''Decorator funcs are here.
-'''
+"""Decorator funcs are here.
+"""
 
 from src.io import process_cache
 

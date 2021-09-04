@@ -1,7 +1,7 @@
 # pylint: disable= c-extension-no-member, broad-except
 
-'''Handles the parsing of the XML data.
-'''
+"""Handles the parsing of the XML data.
+"""
 
 from typing import Any, Optional
 
