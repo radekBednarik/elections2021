@@ -1,7 +1,7 @@
 '''Main.
 '''
 
-from argparse import ArgumentParser, Namespace
+from argparse import Namespace
 from src.api import get_county_data
 from src.cli import create_parser, create_subparsers, parse
 from src.io import load_config
@@ -14,14 +14,11 @@ resource_county = config["api"]["resources"]["vysledky_okresy_obce"]
 
 def main():
     """Main func."""
-    parser: ArgumentParser = create_parser()
-    parser = create_subparsers(parser)
-    parsed: Namespace = parse(
-        parser,
-    )
+    parsed: Namespace = parse(create_subparsers(create_parser()))
 
     if parsed.nuts:
         city_name = parsed.name if parsed.name is not None else None
+        # this API call is cached!
         status, raw_data = get_county_data(nuts=parsed.nuts, resource=resource_county)
 
         if status:

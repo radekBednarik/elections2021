@@ -59,11 +59,3 @@ def get_county_data(nuts: str = None, resource: str = None) -> tuple[bool, str]:
         status, text = validate(response.text)
         return (status, text)
     raise TypeError("Arguments can be only of type {str}!")
-
-
-if __name__ == "__main__":
-    print(
-        get_county_data(
-            nuts="CZ0200", resource="/pls/ps2021/vysledky_okres?nuts={{nuts}}"
-        )
-    )
