@@ -58,10 +58,10 @@ def parse_county_data(parsed_data: Any, city: Optional[str] = None) -> dict[str,
     for level_1 in authorities_data_level:
         if city is None and "OKRES" in level_1.tag:
             master_key = level_1.attrib["NUTS_OKRES"]
-            output[master_key] = {"descriptors": level_1.attrib, "data": []}
+            output[master_key] = {"descriptors": dict(level_1.attrib), "data": []}
 
             for level_2 in list(level_1):
-                output[master_key]["data"].append(level_2.attrib)
+                output[master_key]["data"].append(dict(level_2.attrib))
 
             break
 
@@ -71,10 +71,10 @@ def parse_county_data(parsed_data: Any, city: Optional[str] = None) -> dict[str,
             and city.strip() == level_1.attrib["NAZ_OBEC"]
         ):
             master_key = level_1.attrib["CIS_OBEC"]
-            output[master_key] = {"descriptors": level_1.attrib, "data": []}
+            output[master_key] = {"descriptors": dict(level_1.attrib), "data": []}
 
             for level_2 in list(level_1):
-                output[master_key]["data"].append(level_2.attrib)
+                output[master_key]["data"].append(dict(level_2.attrib))
 
             break
 
