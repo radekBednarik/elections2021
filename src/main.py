@@ -17,7 +17,7 @@ def main():
 
     enable_coloring()
     parsed: Namespace = parse(
-        create_subparsers(create_parser()), ["county", "CZ0100"]
+        create_subparsers(create_parser()), ["county", "CZ0100", "--name=Praha 1"]
     )
 
     if parsed.nuts:

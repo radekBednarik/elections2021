@@ -6,6 +6,7 @@
 from typing import Any, Optional
 
 from lxml import etree
+from src.decorators import add_party_name
 
 
 def parse_xml(
@@ -35,6 +36,7 @@ def parse_xml(
         return (False, None)
 
 
+@add_party_name
 def parse_county_data(parsed_data: Any, city: Optional[str] = None) -> dict[str, Any]:
     """Parses XML object to retrieve data as `dict`.
 
@@ -77,5 +79,4 @@ def parse_county_data(parsed_data: Any, city: Optional[str] = None) -> dict[str,
                 output[master_key]["data"].append(dict(level_2.attrib))
 
             break
-
     return output
