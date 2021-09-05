@@ -35,7 +35,7 @@ def read_csv(filepath: str) -> list[list[str]]:
     """
     content: list[list[str]] = []
     with open(filepath, mode="r", encoding="utf-8") as csv_file:
-        csv_reader = reader(csv_file)
+        csv_reader = reader(csv_file, delimiter=";")
 
         for row in csv_reader:
             content.append(row)
@@ -69,6 +69,45 @@ def read_nuts(
                 f"Record with {nuts} NUTS key was already found before. This value must be unique!."
             )
         output[nuts] = county
+
+    return output
+
+
+def read_psrkl(
+    filepath: str = "src/classifiers/psrkl.csv", header: bool = True
+) -> dict[str, dict[str, str]]:
+    """Reads classifier .csv with data of political parties and returns data
+    as `dict`.
+
+    Args:
+        filepath (str, optional): path to .csv file. Defaults to "src/classifiers/psrkl.csv".
+        header (bool, optional): is header present in csv. Defaults to True.
+
+    Raises:
+        KeyError: throws, if there is duplication in `KSTRANA` field
+
+    Returns:
+        dict[str, dict[str, str]]: parsed data
+    """
+    content: list[list[str]] = read_csv(filepath)
+    output: dict[str, dict[str, str]] = {}
+
+    if header:
+        header_row: list[str] = content[0]
+        content = content[1:]
+
+    for row in content:
+        k_strana, *cols = row
+        cut_header: list[str] = header_row[1:]
+
+        if hasattr(output, k_strana):
+            raise KeyError(
+                f"Record with {k_strana} key was already found before. This value must be unique!"
+            )
+        output[k_strana] = {}
+
+        for index, item in enumerate(cols):
+            output[k_strana][cut_header[index]] = item
 
     return output
 
@@ -125,3 +164,7 @@ def process_cache(
         return cache[resource_url]["returned"]
 
     return cache[resource_url]["returned"]
+
+
+if __name__ == "__main__":
+    print(read_psrkl())
