@@ -1,6 +1,6 @@
 # pylint: disable=missing-class-docstring, invalid-name, no-self-use, missing-function-docstring
-'''Handles tests of API functions.
-'''
+"""Handles tests of API functions.
+"""
 
 from typing import Any
 
@@ -21,11 +21,11 @@ class TestApi:
         assert_that(response, instance_of(Response))
 
     def test_get_county_data(self):
-        status, raw_data = get_county_data("CZ0100", resource=county)
+        status, raw_data = get_county_data(nuts="CZ0100", resource=county)
         assert_that(status, is_(True))
         assert_that(raw_data, instance_of(str))
 
     def test_validate(self):
-        status, raw_data = get_county_data("CZ01", resource=county)
+        status, raw_data = get_county_data(nuts="CZ01", resource=county)
         assert_that(status, is_(False))
         assert_that(raw_data, contains_string("<CHYBA>"))

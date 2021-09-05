@@ -1,9 +1,10 @@
-'''Handles API calls to opend data XML data source.
-'''
+"""Handles API calls to opend data XML data source.
+"""
 
 from requests import Response, get
 
-from src.utils import retrieve_error_message
+from src.utils import retrieve_error_message, replace_substring
+from src.decorators import cache
 
 
 def call(resource: str, root_: str = "https://www.volby.cz") -> Response:
@@ -39,19 +40,22 @@ def validate(response_text: str, start_tag: str = "<CHYBA>") -> tuple[bool, str]
     return (True, response_text)
 
 
-def get_county_data(nuts: str, resource: str) -> tuple[bool, str]:
+@cache(time_delta=300, location="cache.tmp", resource_template=r"{{nuts}}")
+def get_county_data(nuts: str = None, resource: str = None) -> tuple[bool, str]:
     """Returns data of given `nuts` county as `str`. This needs to be
     further parsed by XML parser.
 
     Args:
-        nuts (str): NUTS code of given county/city.
-        resource (str): resource template url.
+        nuts (Optional[str]): NUTS code of given county/city.
+        resource (Optional[str]): resource template url.
 
     Returns:
         tuple[bool, str]: if data does not contain error message, return `(True, data)`.
-        Else return `(False, error message)`
+        Else return `(False, error message)`.
     """
-    full_resource: str = resource.replace(r"{{nuts}}", nuts)
-    response: Response = call(full_resource)
-    status, text = validate(response.text)
-    return (status, text)
+    if nuts is not None and resource is not None:
+        full_resource: str = replace_substring(resource, nuts, r"{{nuts}}")
+        response: Response = call(full_resource)
+        status, text = validate(response.text)
+        return (status, text)
+    raise TypeError("Arguments can be only of type {str}!")

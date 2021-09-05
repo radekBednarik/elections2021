@@ -7,6 +7,7 @@ name = "pypi"
 requests = "*"
 pytomlpp = "*"
 lxml = "*"
+colorama = "*"
 
 [dev-packages]
 black = "*"
@@ -16,6 +17,7 @@ types-requests = "*"
 pytest = "*"
 pyhamcrest = "*"
 pylint = "*"
+lizard = "*"
 
 [requires]
 python_version = "3.9"

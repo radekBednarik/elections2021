@@ -1,5 +1,5 @@
-'''Utilities.
-'''
+"""Utilities.
+"""
 
 
 def retrieve_error_message(data: str, start_tag: str = "<CHYBA>") -> str:
@@ -26,3 +26,20 @@ def retrieve_error_message(data: str, start_tag: str = "<CHYBA>") -> str:
         raise IndexError("Error message from data could not be retrieved.")
 
     return data[start_index : end_index + len(end_tag)]
+
+
+def replace_substring(string: str, substring: str, template: str) -> str:
+    """Replaces template substring for substring in the string.
+
+    Returns the string.
+
+    Args:
+        string (str): string with templated, which should be replaced
+        by substring
+        substring (str): substring to replace the template
+        template (str): template to be replaced by substring
+
+    Returns:
+        str: string with substring instead of the template
+    """
+    return string.replace(template, substring)

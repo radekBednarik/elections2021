@@ -1,9 +1,14 @@
-'''Handles IO operations.
-'''
+"""Handles IO operations.
+"""
+import pickle
 from csv import reader
-from typing import Any
+from datetime import datetime, timedelta
+from os.path import isfile
+from typing import Any, Callable
 
 from pytomlpp import loads
+
+from src.utils import replace_substring
 
 
 def load_config(filepath: str = "config.toml") -> dict[str, Any]:
@@ -30,7 +35,7 @@ def read_csv(filepath: str) -> list[list[str]]:
     """
     content: list[list[str]] = []
     with open(filepath, mode="r", encoding="utf-8") as csv_file:
-        csv_reader = reader(csv_file)
+        csv_reader = reader(csv_file, delimiter=";")
 
         for row in csv_reader:
             content.append(row)
@@ -66,3 +71,100 @@ def read_nuts(
         output[nuts] = county
 
     return output
+
+
+def read_psrkl(
+    filepath: str = "src/classifiers/psrkl.csv", header: bool = True
+) -> dict[str, dict[str, str]]:
+    """Reads classifier .csv with data of political parties and returns data
+    as `dict`.
+
+    Args:
+        filepath (str, optional): path to .csv file. Defaults to "src/classifiers/psrkl.csv".
+        header (bool, optional): is header present in csv. Defaults to True.
+
+    Raises:
+        KeyError: throws, if there is duplication in `KSTRANA` field
+
+    Returns:
+        dict[str, dict[str, str]]: parsed data
+    """
+    content: list[list[str]] = read_csv(filepath)
+    output: dict[str, dict[str, str]] = {}
+
+    if header:
+        header_row: list[str] = content[0]
+        content = content[1:]
+
+    for row in content:
+        k_strana, *cols = row
+        cut_header: list[str] = header_row[1:]
+
+        if hasattr(output, k_strana):
+            raise KeyError(
+                f"Record with {k_strana} key was already found before. This value must be unique!"
+            )
+        output[k_strana] = {}
+
+        for index, item in enumerate(cols):
+            output[k_strana][cut_header[index]] = item
+
+    return output
+
+
+def process_cache(
+    time_delta: int,
+    cache_location: str,
+    func: Callable,
+    resource_template: str,
+    *args,
+    **kwargs,
+) -> Any:
+    """Processes cache.
+
+    Args:
+        time_delta (int): cache time period
+        cache_location (str): where is cache file stored
+        func (Callable): function which call is being cached
+        resource_template (str): resource template of the api call
+
+    Returns:
+        Any - returns data of the cached func
+    """
+
+    def write_cache(key: str, cache: dict[str, Any]):
+        cache[key]["timestamp"] = datetime.now()
+        cache[key]["returned"] = func(*args, **kwargs)
+        with open(cache_location, mode="wb") as write_handle:
+            pickle.dump(cache, write_handle)
+        return cache
+
+    resource_url: str = replace_substring(
+        kwargs["resource"], kwargs["nuts"], resource_template
+    )
+    cache: dict[str, Any] = {}
+
+    if not isfile(cache_location):
+        cache[resource_url] = {}
+        cache = write_cache(resource_url, cache)
+        return cache[resource_url]["returned"]
+
+    with open(cache_location, mode="rb") as read_handle:
+        cache = pickle.load(read_handle)
+
+    if resource_url not in list(cache.keys()):
+        cache[resource_url] = {}
+        cache = write_cache(resource_url, cache)
+        return cache[resource_url]["returned"]
+
+    now_: datetime = datetime.now()
+
+    if now_ > (cache[resource_url]["timestamp"] + timedelta(seconds=time_delta)):
+        cache = write_cache(resource_url, cache)
+        return cache[resource_url]["returned"]
+
+    return cache[resource_url]["returned"]
+
+
+if __name__ == "__main__":
+    print(read_psrkl())
