@@ -164,7 +164,3 @@ def process_cache(
         return cache[resource_url]["returned"]
 
     return cache[resource_url]["returned"]
-
-
-if __name__ == "__main__":
-    print(read_psrkl())
