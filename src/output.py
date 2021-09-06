@@ -40,6 +40,18 @@ def color_blue(string: str) -> str:
     return f"{Fore.BLUE}{string}{Style.RESET_ALL}"
 
 
+def color_cyan(string: str) -> str:
+    """Colors the string CYAN.
+
+    Args:
+        string (str): string to be colored
+
+    Returns:
+        str: colored string
+    """
+    return f"{Fore.CYAN}{string}{Style.RESET_ALL}"
+
+
 def print_colored_data(data: Union[dict[str, Any], list[Any]]) -> None:
     """Stdout colored `data` dict.
 
@@ -52,7 +64,7 @@ def print_colored_data(data: Union[dict[str, Any], list[Any]]) -> None:
 
         for key, value in items:
             if not isinstance(value, (dict, list)):
-                print(color_blue(key), "::", color_green(value))
+                print(color_cyan(key), "::", color_green(value))
 
             print_colored_data(value)
 
