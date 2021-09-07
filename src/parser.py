@@ -82,15 +82,30 @@ def parse_county_data(parsed_data: Any, city: Optional[str] = None) -> dict[str,
     return output
 
 
+@add_party_name
 def parse_state_data(
     parsed_data: Any, district: Optional[int] = None
 ) -> dict[str, Any]:
+    """Parses XML object to retrieve data as `dict`.
+
+    If `district` is not provided, returns state level data (CR - tagged
+    element). Otherwise returns district level of data.
+
+    `district` value must be in <1, 14> range inclusive.
+
+    Args:
+        parsed_data (Any): lxml Element object representing XML data
+        district (Optional[int], optional): Number of district. Defaults to None.
+
+    Returns:
+        dict[str, Any]: parsed data as `dict`.
+    """
     output: dict[str, Any] = {}
     top_level_data: list[Any] = list(parsed_data)
     master_key: str = ""
 
     for level_1 in top_level_data:
-        if district is None and level_1.tag == "CR":
+        if district is None and "CR" in level_1.tag:
             master_key = level_1.tag
             output[master_key] = {"data": []}
 

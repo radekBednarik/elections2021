@@ -19,9 +19,7 @@ def main():
     enable_coloring()
     parsed: Namespace = parse(create_subparsers(create_parser()))
 
-    print(parsed)
-
-    if hasattr(parsed, "nuts") and parsed.nuts:
+    if hasattr(parsed, "nuts"):
         city_name = parsed.name if parsed.name is not None else None
         # this API call is cached!
         status, raw_data = get_county_data(nuts=parsed.nuts, resource=resource_county)
@@ -33,7 +31,7 @@ def main():
                 county_data = parse_county_data(parsed_data, city=city_name)
                 print_colored_data(county_data)
 
-    if hasattr(parsed, "district") and parsed.district is None:
+    if hasattr(parsed, "district"):
         status, raw_data = get_state_data(resource=resource_state)
 
         if status:
