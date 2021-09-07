@@ -32,13 +32,15 @@ def main():
                 print_colored_data(county_data)
 
     if hasattr(parsed, "district"):
+        district = str(parsed.district) if parsed.district is not None else None
+        # this API call is cached!
         status, raw_data = get_state_data(resource=resource_state)
 
         if status:
             status, parsed_data = parse_xml(raw_data)
 
             if status:
-                state_data = parse_state_data(parsed_data)
+                state_data = parse_state_data(parsed_data, district=district)
                 print_colored_data(state_data)
 
 
