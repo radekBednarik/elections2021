@@ -84,7 +84,7 @@ def parse_county_data(parsed_data: Any, city: Optional[str] = None) -> dict[str,
 
 @add_party_name
 def parse_state_data(
-    parsed_data: Any, district: Optional[int] = None
+    parsed_data: Any, district: Optional[str] = None
 ) -> dict[str, Any]:
     """Parses XML object to retrieve data as `dict`.
 
@@ -118,6 +118,26 @@ def parse_state_data(
                     for level_4 in list(level_3):
                         output[master_key]["data"].append(dict(level_4.attrib))
 
-            return output
+        if district is not None:
+            # check if district value is in <1, 14>
+            if (int(district)) not in list(range(1, 15)):
+                raise IndexError(
+                    f"{district} value is out of bounds.\
+                    Must be in integer interval <1, 14> inclusive."
+                )
+            items: list[tuple[str, str]] = list(level_1.attrib.items())
+
+            for key, value in items:
+                if key == "CIS_KRAJ" and value == district:
+                    output[master_key] = {
+                        "descriptors": dict(level_1.attrib),
+                        "data": [],
+                    }
+
+                    for level_2 in list(level_1):
+                        output[master_key]["data"].append(dict(level_2.attrib))
+
+                        for level_3 in list(level_2):
+                            output[master_key]["data"].append(dict(level_3.attrib))
 
     return output
