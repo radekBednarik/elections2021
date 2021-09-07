@@ -46,7 +46,7 @@ def create_subparsers(parser: ArgumentParser) -> ArgumentParser:
         "state", help="parser for state level data."
     )
     parser_state.add_argument(
-        "--county",
+        "--district",
         action="store",
         type=int,
         help="If provided, outputs data for given region. Otherwise\

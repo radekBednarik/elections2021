@@ -61,6 +61,7 @@ def get_county_data(nuts: str = None, resource: str = None) -> tuple[bool, str]:
     raise TypeError("Arguments can be only of type {str}!")
 
 
+@cache(time_delta=300, location="cache.tmp", resource_template=None)
 def get_state_data(resource: str = None) -> tuple[bool, str]:
     """Returns data from the state level as `str`. This needs to be
     further parsed by XML parser.

@@ -1,7 +1,7 @@
 """Decorator funcs are here.
 """
 
-from typing import Any, Callable, Union
+from typing import Any, Callable, Optional, Union
 
 from src.io import process_cache, read_psrkl
 
@@ -20,7 +20,7 @@ def cache(**kwargs):
         func,
         time_delta: int = kwargs["time_delta"],
         location: str = kwargs["location"],
-        resource_template: str = kwargs["resource_template"],
+        resource_template: Optional[str] = kwargs["resource_template"],
     ):
         def wrapper(*args, **kwargs):
             return process_cache(

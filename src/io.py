@@ -4,7 +4,7 @@ import pickle
 from csv import reader
 from datetime import datetime, timedelta
 from os.path import isfile
-from typing import Any, Callable
+from typing import Any, Callable, Optional
 
 from pytomlpp import loads
 
@@ -116,7 +116,7 @@ def process_cache(
     time_delta: int,
     cache_location: str,
     func: Callable,
-    resource_template: str,
+    resource_template: Optional[str],
     *args,
     **kwargs,
 ) -> Any:
@@ -126,7 +126,7 @@ def process_cache(
         time_delta (int): cache time period
         cache_location (str): where is cache file stored
         func (Callable): function which call is being cached
-        resource_template (str): resource template of the api call
+        resource_template (Optional[str]): resource template of the api call
 
     Returns:
         Any - returns data of the cached func
@@ -139,9 +139,13 @@ def process_cache(
             pickle.dump(cache, write_handle)
         return cache
 
-    resource_url: str = replace_substring(
-        kwargs["resource"], kwargs["nuts"], resource_template
-    )
+    if resource_template:
+        resource_url: str = replace_substring(
+            kwargs["resource"], kwargs["nuts"], resource_template
+        )
+    else:
+        resource_url = kwargs["resource"]
+
     cache: dict[str, Any] = {}
 
     if not isfile(cache_location):

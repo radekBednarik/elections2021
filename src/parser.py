@@ -80,3 +80,29 @@ def parse_county_data(parsed_data: Any, city: Optional[str] = None) -> dict[str,
 
             break
     return output
+
+
+def parse_state_data(
+    parsed_data: Any, district: Optional[int] = None
+) -> dict[str, Any]:
+    output: dict[str, Any] = {}
+    top_level_data: list[Any] = list(parsed_data)
+    master_key: str = ""
+
+    for level_1 in top_level_data:
+        if district is None and level_1.tag == "CR":
+            master_key = level_1.tag
+            output[master_key] = {"data": []}
+
+            for level_2 in list(level_1):
+                output[master_key]["data"].append(dict(level_2.attrib))
+
+                for level_3 in list(level_2):
+                    output[master_key]["data"].append(dict(level_3.attrib))
+
+                    for level_4 in list(level_3):
+                        output[master_key]["data"].append(dict(level_4.attrib))
+
+            return output
+
+    return output
