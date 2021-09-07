@@ -71,3 +71,4 @@ def print_colored_data(data: Union[dict[str, Any], list[Any]]) -> None:
     if isinstance(data, list):
         for item in data:
             print_colored_data(item)
+            print("-------------")
