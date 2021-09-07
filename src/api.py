@@ -59,3 +59,24 @@ def get_county_data(nuts: str = None, resource: str = None) -> tuple[bool, str]:
         status, text = validate(response.text)
         return (status, text)
     raise TypeError("Arguments can be only of type {str}!")
+
+
+def get_state_data(resource: str = None) -> tuple[bool, str]:
+    """Returns data from the state level as `str`. This needs to be
+    further parsed by XML parser.
+
+    Args:
+        resource (str, optional): resource URL. Defaults to None.
+
+    Raises:
+        TypeError: if resource is None
+
+    Returns:
+        tuple[bool, str]: if data does not contain error message, return `(True, data)`.
+        Else return `(False, error_message)`
+    """
+    if resource is not None:
+        response: Response = call(resource)
+        status, text = validate(response.text)
+        return (status, text)
+    raise TypeError("Argument can be only of type {str}!")
