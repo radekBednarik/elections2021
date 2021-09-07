@@ -93,6 +93,10 @@ def parse_state_data(
 
     `district` value must be in <1, 14> range inclusive.
 
+    Note:
+        A bit of spaghetti, but I do not want to do recursion. I am
+        lazy and data structure is fixed.
+
     Args:
         parsed_data (Any): lxml Element object representing XML data
         district (Optional[int], optional): Number of district. Defaults to None.
@@ -104,19 +108,26 @@ def parse_state_data(
     top_level_data: list[Any] = list(parsed_data)
     master_key: str = ""
 
+    def nested_loops(
+        level_1: Any, output: dict[str, Any], master_key: str
+    ) -> dict[str, Any]:
+        for level_2 in list(level_1):
+            output[master_key]["data"].append(dict(level_2.attrib))
+
+            for level_3 in list(level_2):
+                output[master_key]["data"].append(dict(level_3.attrib))
+
+                for level_4 in list(level_3):
+                    output[master_key]["data"].append(dict(level_4.attrib))
+        return output
+
     for level_1 in top_level_data:
+        master_key = level_1.tag
+
         if district is None and "CR" in level_1.tag:
-            master_key = level_1.tag
             output[master_key] = {"data": []}
-
-            for level_2 in list(level_1):
-                output[master_key]["data"].append(dict(level_2.attrib))
-
-                for level_3 in list(level_2):
-                    output[master_key]["data"].append(dict(level_3.attrib))
-
-                    for level_4 in list(level_3):
-                        output[master_key]["data"].append(dict(level_4.attrib))
+            output = nested_loops(level_1, output, master_key)
+            break
 
         if district is not None:
             # check if district value is in <1, 14>
@@ -134,10 +145,6 @@ def parse_state_data(
                         "data": [],
                     }
 
-                    for level_2 in list(level_1):
-                        output[master_key]["data"].append(dict(level_2.attrib))
-
-                        for level_3 in list(level_2):
-                            output[master_key]["data"].append(dict(level_3.attrib))
-
+                    output = nested_loops(level_1, output, master_key)
+                break
     return output
