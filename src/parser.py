@@ -80,3 +80,71 @@ def parse_county_data(parsed_data: Any, city: Optional[str] = None) -> dict[str,
 
             break
     return output
+
+
+@add_party_name
+def parse_state_data(
+    parsed_data: Any, district: Optional[str] = None
+) -> dict[str, Any]:
+    """Parses XML object to retrieve data as `dict`.
+
+    If `district` is not provided, returns state level data (CR - tagged
+    element). Otherwise returns district level of data.
+
+    `district` value must be in <1, 14> range inclusive.
+
+    Note:
+        A bit of spaghetti, but I do not want to do recursion. I am
+        lazy and data structure is fixed.
+
+    Args:
+        parsed_data (Any): lxml Element object representing XML data
+        district (Optional[int], optional): Number of district. Defaults to None.
+
+    Returns:
+        dict[str, Any]: parsed data as `dict`.
+    """
+    output: dict[str, Any] = {}
+    top_level_data: list[Any] = list(parsed_data)
+    master_key: str = ""
+
+    def nested_loops(
+        level_1: Any, output: dict[str, Any], master_key: str
+    ) -> dict[str, Any]:
+        for level_2 in list(level_1):
+            output[master_key]["data"].append(dict(level_2.attrib))
+
+            for level_3 in list(level_2):
+                output[master_key]["data"].append(dict(level_3.attrib))
+
+                for level_4 in list(level_3):
+                    output[master_key]["data"].append(dict(level_4.attrib))
+        return output
+
+    for level_1 in top_level_data:
+        master_key = level_1.tag
+
+        if district is None and "CR" in level_1.tag:
+            output[master_key] = {"data": []}
+            output = nested_loops(level_1, output, master_key)
+            break
+
+        if district is not None:
+            # check if district value is in <1, 14>
+            if (int(district)) not in list(range(1, 15)):
+                raise IndexError(
+                    f"{district} value is out of bounds.\
+                    Must be in integer interval <1, 14> inclusive."
+                )
+            items: list[tuple[str, str]] = list(level_1.attrib.items())
+
+            for key, value in items:
+                if key == "CIS_KRAJ" and value == district:
+                    output[master_key] = {
+                        "descriptors": dict(level_1.attrib),
+                        "data": [],
+                    }
+
+                    output = nested_loops(level_1, output, master_key)
+                break
+    return output
