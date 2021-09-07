@@ -36,8 +36,13 @@ def parse_xml(
         return (False, None)
 
 
+# pylint: disable=unused-argument
+
+
 @add_party_name
-def parse_county_data(parsed_data: Any, city: Optional[str] = None) -> dict[str, Any]:
+def parse_county_data(
+    parsed_data: Any, city: Optional[str] = None, **kwargs
+) -> dict[str, Any]:
     """Parses XML object to retrieve data as `dict`.
 
     In case the `city` name from given NUTS county is not provided,
@@ -84,7 +89,7 @@ def parse_county_data(parsed_data: Any, city: Optional[str] = None) -> dict[str,
 
 @add_party_name
 def parse_state_data(
-    parsed_data: Any, district: Optional[str] = None
+    parsed_data: Any, district: Optional[str] = None, **kwargs
 ) -> dict[str, Any]:
     """Parses XML object to retrieve data as `dict`.
 
@@ -148,3 +153,6 @@ def parse_state_data(
                     output = nested_loops(level_1, output, master_key)
                 break
     return output
+
+
+# pylint: enable=unused-argument

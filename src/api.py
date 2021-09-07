@@ -40,8 +40,13 @@ def validate(response_text: str, start_tag: str = "<CHYBA>") -> tuple[bool, str]
     return (True, response_text)
 
 
+# pylint: disable=unused-argument
+
+
 @cache(time_delta=300, location="cache.tmp", resource_template=r"{{nuts}}")
-def get_county_data(nuts: str = None, resource: str = None) -> tuple[bool, str]:
+def get_county_data(
+    nuts: str = None, resource: str = None, **kwargs
+) -> tuple[bool, str]:
     """Returns data of given `nuts` county as `str`. This needs to be
     further parsed by XML parser.
 
@@ -62,7 +67,7 @@ def get_county_data(nuts: str = None, resource: str = None) -> tuple[bool, str]:
 
 
 @cache(time_delta=300, location="cache.tmp", resource_template=None)
-def get_state_data(resource: str = None) -> tuple[bool, str]:
+def get_state_data(resource: str = None, **kwargs) -> tuple[bool, str]:
     """Returns data from the state level as `str`. This needs to be
     further parsed by XML parser.
 
@@ -81,3 +86,6 @@ def get_state_data(resource: str = None) -> tuple[bool, str]:
         status, text = validate(response.text)
         return (status, text)
     raise TypeError("Argument can be only of type {str}!")
+
+
+# pylint: enable=unused-argument
