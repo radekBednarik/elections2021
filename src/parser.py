@@ -36,8 +36,13 @@ def parse_xml(
         return (False, None)
 
 
+# pylint: disable=unused-argument
+
+
 @add_party_name
-def parse_county_data(parsed_data: Any, city: Optional[str] = None) -> dict[str, Any]:
+def parse_county_data(
+    parsed_data: Any, city: Optional[str] = None, **kwargs
+) -> dict[str, Any]:
     """Parses XML object to retrieve data as `dict`.
 
     In case the `city` name from given NUTS county is not provided,
@@ -84,7 +89,7 @@ def parse_county_data(parsed_data: Any, city: Optional[str] = None) -> dict[str,
 
 @add_party_name
 def parse_state_data(
-    parsed_data: Any, district: Optional[str] = None
+    parsed_data: Any, district: Optional[str] = None, **kwargs
 ) -> dict[str, Any]:
     """Parses XML object to retrieve data as `dict`.
 
@@ -92,10 +97,6 @@ def parse_state_data(
     element). Otherwise returns district level of data.
 
     `district` value must be in <1, 14> range inclusive.
-
-    Note:
-        A bit of spaghetti, but I do not want to do recursion. I am
-        lazy and data structure is fixed.
 
     Args:
         parsed_data (Any): lxml Element object representing XML data
@@ -111,14 +112,11 @@ def parse_state_data(
     def nested_loops(
         level_1: Any, output: dict[str, Any], master_key: str
     ) -> dict[str, Any]:
-        for level_2 in list(level_1):
-            output[master_key]["data"].append(dict(level_2.attrib))
 
-            for level_3 in list(level_2):
-                output[master_key]["data"].append(dict(level_3.attrib))
+        for level_x in list(level_1):
+            output[master_key]["data"].append(dict(level_x.attrib))
+            nested_loops(level_x, output, master_key)
 
-                for level_4 in list(level_3):
-                    output[master_key]["data"].append(dict(level_4.attrib))
         return output
 
     for level_1 in top_level_data:
@@ -126,8 +124,7 @@ def parse_state_data(
 
         if district is None and "CR" in level_1.tag:
             output[master_key] = {"data": []}
-            output = nested_loops(level_1, output, master_key)
-            break
+            return nested_loops(level_1, output, master_key)
 
         if district is not None:
             # check if district value is in <1, 14>
@@ -144,7 +141,9 @@ def parse_state_data(
                         "descriptors": dict(level_1.attrib),
                         "data": [],
                     }
+                    return nested_loops(level_1, output, master_key)
 
-                    output = nested_loops(level_1, output, master_key)
-                break
-    return output
+    raise RuntimeError("State level XML data were not parsed!")
+
+
+# pylint: enable=unused-argument
