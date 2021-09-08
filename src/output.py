@@ -1,9 +1,23 @@
+# pylint: disable=expression-not-assigned
+
 """Handles output of data in the console.
 """
+from subprocess import CompletedProcess, run
+from sys import platform
+from typing import Any, Optional, Union
 
-from typing import Any, Union
+from colorama import Fore, Style, init
 
-from colorama import Fore, init, Style
+
+def clear_screen() -> Optional[CompletedProcess]:
+    """Clears the console."""
+    if platform.startswith("linux"):
+        return run("clear", shell=True, check=True)
+
+    if platform.startswith("win32"):
+        return run("cls", shell=False, check=True)
+
+    return None
 
 
 def enable_coloring() -> None:
