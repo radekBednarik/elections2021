@@ -3,6 +3,7 @@
 
 from argparse import Namespace
 from typing import Callable
+from subprocess import run
 
 from src.api import get_county_data, get_state_data
 from src.cli import create_parser, create_subparsers, parse
@@ -44,7 +45,7 @@ def main():
 
     if hasattr(parsed, "nuts"):
         city_name = parsed.name if parsed.name is not None else None
-        wrapper(
+        return wrapper(
             get_county_data,
             parse_xml,
             parse_county_data,
@@ -56,7 +57,7 @@ def main():
 
     if hasattr(parsed, "district"):
         district = str(parsed.district) if parsed.district is not None else None
-        wrapper(
+        return wrapper(
             get_state_data,
             parse_xml,
             parse_state_data,
@@ -64,7 +65,3 @@ def main():
             resource=resource_state,
             district=district,
         )
-
-
-if __name__ == "__main__":
-    main()
