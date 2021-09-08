@@ -8,6 +8,7 @@ requests = "*"
 pytomlpp = "*"
 lxml = "*"
 colorama = "*"
+urwid = "*"
 
 [dev-packages]
 black = "*"
