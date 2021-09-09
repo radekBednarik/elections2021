@@ -15,7 +15,7 @@ def clear_screen() -> Optional[CompletedProcess]:
         return run("clear", shell=True, check=True)
 
     if platform.startswith("win32"):
-        return run("cls", shell=False, check=True)
+        return run("cls", shell=True, check=True)
 
     return None
 
@@ -79,6 +79,7 @@ def print_colored_data(data: Union[dict[str, Any], list[Any]]) -> None:
         for key, value in items:
             if not isinstance(value, (dict, list)):
                 print(color_cyan(key), "::", color_green(value))
+                continue
 
             print_colored_data(value)
 
