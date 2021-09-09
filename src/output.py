@@ -5,7 +5,7 @@
 from signal import signal, SIGINT
 from subprocess import CompletedProcess, run
 from sys import platform, exit
-from typing import Any, NoReturn, Optional, Union
+from typing import Any, Optional, Union
 
 from colorama import Fore, Style, init
 
