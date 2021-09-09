@@ -30,7 +30,7 @@ def looper(worker_: Callable) -> None:
     while True:
         index += 1
         worker_()
-        sleep(10)
+        sleep(300)
         clear_screen()
         print(f"Polled for {str(index + 1)} time\n")
 
