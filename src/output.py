@@ -1,12 +1,26 @@
-# pylint: disable=expression-not-assigned
+# pylint: disable=expression-not-assigned, redefined-builtin
 
 """Handles output of data in the console.
 """
+from signal import signal, SIGINT
 from subprocess import CompletedProcess, run
-from sys import platform
-from typing import Any, Optional, Union
+from sys import platform, exit
+from typing import Any, NoReturn, Optional, Union
 
 from colorama import Fore, Style, init
+
+# pylint: disable=unused-argument
+def _handler(signum, frame):
+    if signum == SIGINT:
+        exit()
+
+
+# pylint: enable=unused-argument
+
+
+def handle_sigint():
+    """Handles SIGINT and cleanly exits without stacktrace."""
+    signal(SIGINT, _handler)
 
 
 def clear_screen() -> Optional[CompletedProcess]:

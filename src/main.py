@@ -7,7 +7,7 @@ from typing import Callable
 from src.api import get_county_data, get_state_data
 from src.cli import create_parser, create_subparsers, parse
 from src.io import load_config
-from src.output import clear_screen, enable_coloring, print_colored_data
+from src.output import clear_screen, enable_coloring, handle_sigint, print_colored_data
 from src.parser import parse_county_data, parse_state_data, parse_xml
 
 config = load_config()
@@ -17,6 +17,7 @@ resource_state = config["api"]["resources"]["vysledky_stat_kraje"]
 
 def main():
     """Main func."""
+    handle_sigint()
     looper(worker)
 
 
