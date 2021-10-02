@@ -37,7 +37,7 @@ def parse_xml(
 
 
 def nested_loops(
-    level_1: Any, output: dict[str, Any], master_key: str
+    level_1: Any, output: dict[str, Any], master_key: str, **kwargs
 ) -> dict[str, Any]:
     """Runs thru all nested lists of parsed xml data, appends
     them to the `output` dict and returns the dict.
@@ -51,9 +51,17 @@ def nested_loops(
         dict[str, Any]: parsed nested xml data, flattened inside `list` of
         the output `dict`
     """
+    iteration: int = kwargs["iteration"] if hasattr(kwargs, "iteration") is True else 0
+    temp: Any
+    last_index: int = 0
     for level_x in list(level_1):
-        output[master_key]["data"].append(dict(level_x.attrib))
-        nested_loops(level_x, output, master_key)
+        temp = level_x.tag
+        if iteration == 0:
+            output[master_key]["data"].append({temp: {}})
+        last_index = len(output[master_key]["data"]) - 1
+        output[master_key]["data"][last_index][temp] = dict(level_x.attrib)
+
+        nested_loops(level_x, output, master_key, iteration=(iteration + 1))
 
     return output
 

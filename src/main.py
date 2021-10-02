@@ -1,5 +1,8 @@
 """Main.
 """
+
+from pprint import PrettyPrinter as pp
+
 from argparse import Namespace
 from time import sleep
 from typing import Callable
@@ -53,7 +56,8 @@ def worker():
 
             if status:
                 processed_data = data_specific_parser(parsed_data, **kwargs)
-                printer(processed_data)
+                pp(indent=2).pprint(processed_data)
+                # printer(processed_data)
             else:
                 raise RuntimeError(f"{parsed_data}")
 
