@@ -1,13 +1,16 @@
 """Main.
 """
 
+from pprint import PrettyPrinter as pp
+
 from argparse import Namespace
+from time import sleep
 from typing import Callable
 
 from src.api import get_county_data, get_state_data
 from src.cli import create_parser, create_subparsers, parse
 from src.io import load_config
-from src.output import enable_coloring, print_colored_data
+from src.output import clear_screen, enable_coloring, handle_sigint, print_colored_data
 from src.parser import parse_county_data, parse_state_data, parse_xml
 
 config = load_config()
@@ -17,6 +20,27 @@ resource_state = config["api"]["resources"]["vysledky_stat_kraje"]
 
 def main():
     """Main func."""
+    handle_sigint()
+    looper(worker)
+
+
+def looper(worker_: Callable) -> None:
+    """Loops the code inside.
+
+    Args:
+        worker_ (Callable): worker func.
+    """
+    index: int = 0
+    while True:
+        index += 1
+        worker_()
+        sleep(300)
+        clear_screen()
+        print(f"Polled for {str(index + 1)} time\n")
+
+
+def worker():
+    """worker func."""
 
     def wrapper(
         api_func: Callable,
@@ -32,7 +56,8 @@ def main():
 
             if status:
                 processed_data = data_specific_parser(parsed_data, **kwargs)
-                printer(processed_data)
+                pp(indent=2).pprint(processed_data)
+                # printer(processed_data)
             else:
                 raise RuntimeError(f"{parsed_data}")
 

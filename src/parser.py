@@ -36,6 +36,36 @@ def parse_xml(
         return (False, None)
 
 
+def nested_loops(
+    level_1: Any, output: dict[str, Any], master_key: str, **kwargs
+) -> dict[str, Any]:
+    """Runs thru all nested lists of parsed xml data, appends
+    them to the `output` dict and returns the dict.
+
+    Args:
+        level_1 (Any): lxml Element object representing the first level of the data
+        output (dict[str, Any]): final data output as `dict`
+        master_key (str): first key of the output `dict`
+
+    Returns:
+        dict[str, Any]: parsed nested xml data, flattened inside `list` of
+        the output `dict`
+    """
+    iteration: int = kwargs["iteration"] if hasattr(kwargs, "iteration") is True else 0
+    temp: Any
+    last_index: int = 0
+    for level_x in list(level_1):
+        temp = level_x.tag
+        if iteration == 0:
+            output[master_key]["data"].append({temp: {}})
+        last_index = len(output[master_key]["data"]) - 1
+        output[master_key]["data"][last_index][temp] = dict(level_x.attrib)
+
+        nested_loops(level_x, output, master_key, iteration=(iteration + 1))
+
+    return output
+
+
 # pylint: disable=unused-argument
 
 
@@ -67,10 +97,7 @@ def parse_county_data(
             master_key = level_1.attrib["NUTS_OKRES"]
             output[master_key] = {"descriptors": dict(level_1.attrib), "data": []}
 
-            for level_2 in list(level_1):
-                output[master_key]["data"].append(dict(level_2.attrib))
-
-            break
+            return nested_loops(level_1, output, master_key)
 
         if (
             city is not None
@@ -80,10 +107,8 @@ def parse_county_data(
             master_key = level_1.attrib["CIS_OBEC"]
             output[master_key] = {"descriptors": dict(level_1.attrib), "data": []}
 
-            for level_2 in list(level_1):
-                output[master_key]["data"].append(dict(level_2.attrib))
+            return nested_loops(level_1, output, master_key)
 
-            break
     return output
 
 
@@ -108,16 +133,6 @@ def parse_state_data(
     output: dict[str, Any] = {}
     top_level_data: list[Any] = list(parsed_data)
     master_key: str = ""
-
-    def nested_loops(
-        level_1: Any, output: dict[str, Any], master_key: str
-    ) -> dict[str, Any]:
-
-        for level_x in list(level_1):
-            output[master_key]["data"].append(dict(level_x.attrib))
-            nested_loops(level_x, output, master_key)
-
-        return output
 
     for level_1 in top_level_data:
         master_key = level_1.tag

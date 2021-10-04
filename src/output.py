@@ -1,9 +1,37 @@
+# pylint: disable=expression-not-assigned, redefined-builtin
+
 """Handles output of data in the console.
 """
+from signal import signal, SIGINT
+from subprocess import CompletedProcess, run
+from sys import platform, exit
+from typing import Any, Optional, Union
 
-from typing import Any, Union
+from colorama import Fore, Style, init
 
-from colorama import Fore, init, Style
+# pylint: disable=unused-argument
+def _handler(signum, frame):
+    if signum == SIGINT:
+        exit()
+
+
+# pylint: enable=unused-argument
+
+
+def handle_sigint():
+    """Handles SIGINT and cleanly exits without stacktrace."""
+    signal(SIGINT, _handler)
+
+
+def clear_screen() -> Optional[CompletedProcess]:
+    """Clears the console."""
+    if platform.startswith("linux"):
+        return run("clear", shell=True, check=True)
+
+    if platform.startswith("win32"):
+        return run("cls", shell=True, check=True)
+
+    return None
 
 
 def enable_coloring() -> None:
@@ -65,6 +93,7 @@ def print_colored_data(data: Union[dict[str, Any], list[Any]]) -> None:
         for key, value in items:
             if not isinstance(value, (dict, list)):
                 print(color_cyan(key), "::", color_green(value))
+                continue
 
             print_colored_data(value)
 
