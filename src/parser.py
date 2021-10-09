@@ -51,6 +51,19 @@ def nested_loops(
         dict[str, Any]: parsed nested xml data, flattened inside `list` of
         the output `dict`
     """
+
+    def to_tuples(nested_dict: dict[str, Any]) -> list[tuple[Any, ...]]:
+        output: list[tuple[Any, ...]] = []
+
+        for key, item in list(nested_dict.items()):
+            temp = []
+            if isinstance(item, dict):
+                temp.append((key, to_tuples(item)))
+            else:
+                temp.append((key, item))
+
+        return output
+
     iteration: int = kwargs["iteration"] if hasattr(kwargs, "iteration") is True else 0
     temp: Any
 
@@ -64,10 +77,13 @@ def nested_loops(
 
         else:
             last_index = len(output[master_key]["data"]) - 1
-            last_items = list(output[master_key]["data"][last_index].items())
+            last_items = list(
+                list(output[master_key]["data"][last_index].values())[0].items()
+            )
             new_items = list(level_x.attrib.items())
-            print(last_items)
-            print(new_items)
+            print("1 ", output[master_key]["data"][last_index])
+            print("2 ", last_items)
+            print("3 ", new_items)
             output[master_key]["data"][last_index] = dict(zip(last_items, new_items))
 
         iteration += 1
