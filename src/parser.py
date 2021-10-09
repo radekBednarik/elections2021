@@ -53,15 +53,26 @@ def nested_loops(
     """
     iteration: int = kwargs["iteration"] if hasattr(kwargs, "iteration") is True else 0
     temp: Any
-    last_index: int = 0
+
     for level_x in list(level_1):
         temp = level_x.tag
+
         if iteration == 0:
             output[master_key]["data"].append({temp: {}})
-        last_index = len(output[master_key]["data"]) - 1
-        output[master_key]["data"][last_index][temp] = dict(level_x.attrib)
+            last_index = len(output[master_key]["data"]) - 1
+            output[master_key]["data"][last_index][temp] = dict(level_x.attrib)
 
-        nested_loops(level_x, output, master_key, iteration=(iteration + 1))
+        else:
+            last_index = len(output[master_key]["data"]) - 1
+            last_items = list(output[master_key]["data"][last_index].items())
+            new_items = list(level_x.attrib.items())
+            print(last_items)
+            print(new_items)
+            output[master_key]["data"][last_index] = dict(zip(last_items, new_items))
+
+        iteration += 1
+
+        nested_loops(level_x, output, master_key, iteration=iteration)
 
     return output
 
