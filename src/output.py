@@ -87,6 +87,11 @@ def print_colored_data(data: Union[dict[str, Any], list[Any]]) -> None:
         data (Union[dict[str, Any], list[Any]]): data dict to be recursively
         stdout to console.
     """
+    if isinstance(data, list):
+        for item in data:
+            print_colored_data(item)
+            print("-------------")
+
     if isinstance(data, dict):
         items = list(data.items())
 
@@ -96,8 +101,3 @@ def print_colored_data(data: Union[dict[str, Any], list[Any]]) -> None:
                 continue
 
             print_colored_data(value)
-
-    if isinstance(data, list):
-        for item in data:
-            print_colored_data(item)
-            print("-------------")
