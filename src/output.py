@@ -87,6 +87,8 @@ def print_colored_data(data: Union[dict[str, Any], list[Any]]) -> None:
         data (Union[dict[str, Any], list[Any]]): data dict to be recursively
         stdout to console.
     """
+    forbidden: list[str] = ["KSTRANA", "VSTRANA", "NAZ_STR"]
+
     if isinstance(data, list):
         for item in data:
             print_colored_data(item)
@@ -96,7 +98,7 @@ def print_colored_data(data: Union[dict[str, Any], list[Any]]) -> None:
         items = list(data.items())
 
         for key, value in items:
-            if not isinstance(value, (dict, list)):
+            if not isinstance(value, (dict, list)) and (key not in forbidden):
                 print(color_cyan(key), "::", color_green(value))
                 continue
 
