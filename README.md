@@ -2,7 +2,7 @@
 
 Fetches data from the Czech Statistical Office Open data server, parses them and outputs them into the console. 
 
-API calls are disk-cached for 5 minutes. Shell content "reload" is set for 5 minutes as well.
+API calls are disk-cached for 1 minute. Shell content "reload" is set for 1 minute as well.
 
 ## Dependencies
 
